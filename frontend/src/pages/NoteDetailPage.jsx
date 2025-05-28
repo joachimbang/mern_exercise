@@ -39,8 +39,38 @@ const NoteDetailPage = () => {
 
   console.log({ id }); // Affiche l'ID dans la console pour le debug
 
-  const handleDelete = () => {
-    // Fonction à implémenter plus tard pour supprimer la note
+  const handleDelete = async (e, id) => {
+    e.preventDefault(); // to get rid of the navigation behaviour. once we click on the icon
+    // we can be redirecting , but if we click the card and its children, we will be redirecting
+    if (!window.confirm("are you sure you want to delete this note? ")) return;
+    try {
+      await api.delete(`notes/${id}`);
+
+      toast.success("note deleted ");
+      navigate("/");
+    } catch (error) {
+      console.log("error in handledelete", error);
+      toast.error("Failed to delete note");
+    }
+  };
+
+  const handleSave = async () => {
+    if ((!note.title.trim() || !note.content.trim())) {
+      toast.error("Please add a title or content");
+      return;
+    }
+    setSaving(true);
+
+    try {
+      await api.put(`/notes/${id}`, note);
+      toast.success("Note updated successfully  ");
+      navigate("/");
+    } catch (error) {
+      console.log("Error saving the note :,error");
+      toast.error("failed to update note");
+    } finally {
+      setSaving(false);
+    }
   };
 
   // Si la note est encore en cours de chargement, affiche un spinner
@@ -83,15 +113,33 @@ const NoteDetailPage = () => {
                   placeholder="Note title"
                   className="input input-bordered"
                   value={note?.title || ""} // ✅ Préviens les erreurs si note est null
-                  
                   // ✅ Ici, on met à jour la note de manière immuable :
                   // `...note` signifie "copier toutes les autres propriétés de l'objet note"
                   // Ensuite, on remplace juste la propriété `title`
                   // Cela évite de perdre d'autres champs comme `content`, `_id`, etc.
-                  onChange={(e) =>
-                    setNote({ ...note, title: e.target.value })
-                  }
+                  onChange={(e) => setNote({ ...note, title: e.target.value })}
                 />
+              </div>
+
+              <div className="form-control mb-4">
+                <label className="label">
+                  <span className="label-text">Content</span>
+                </label>
+                <textarea
+                  placeholder="Write your note here..."
+                  className="textarea textarea-bordered h-32"
+                  value={note.content}
+                  onChange={(e) => setNote({ ...note, content: e.target.value })}
+                />
+              </div>
+              <div className="card-actions justify-end">
+                <button
+                  className="btn btn-primary"
+                  disabled={saving}
+                  onClick={handleSave}
+                >
+                  {saving ? "Saving..." : "Save Changes"}
+                </button>
               </div>
             </div>
           </div>
