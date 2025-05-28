@@ -1,9 +1,26 @@
-import { Link } from "react-router-dom"; // ✅ Corriger aussi ici (voir point 2)
+import { Link } from "react-router"; // ✅ Corriger aussi ici (voir point 2)
 import { PenSquareIcon, Trash2Icon } from "lucide-react";
 import { formatDate } from "../lib/utils";
+import  api from "../lib/axios";
+import toast from "react-hot-toast";
 
-const NoteCard = ({ note }) => {
+const NoteCard = ({ note ,setNotes }) => {
   if (!note) return null;
+
+  const handleDelete = async (e,id) => {
+    e.preventDefault() // to get rid of the navigation behaviour. once we click on the icon
+                      // we can be redirecting , but if we click the card and its children, we will be redirecting
+  if (!window.confirm("are you sure you want to delete this note? "))
+    return;   
+  try {
+    await api.delete(`notes/${id}`);
+    setNotes((prev) => prev.filter(note => note._id !== id))// get ride of the deleted one(on filter la liste en enlevant la note effacer)
+    toast.success("note deleted successfully");
+  } catch (error) {
+    console.log("error in handledelete" , error);
+    toast.error("Failed to delete note");
+  }                
+  }
 
   return (
     <Link
@@ -19,7 +36,7 @@ const NoteCard = ({ note }) => {
           </span>
           <div className="flex items-center gap-1">
             <PenSquareIcon className="size-4" />
-            <button className="btn btn-ghost btn-xs text-error">
+            <button className="btn btn-ghost btn-xs text-error" onClick={(e) => handleDelete(e,note._id)}>
               <Trash2Icon className="size-4" />
             </button>
           </div>
