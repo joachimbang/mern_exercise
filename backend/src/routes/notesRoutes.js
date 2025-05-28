@@ -4,7 +4,7 @@ import { createNote,getNoteById,deleteNote,getAllNotes,updateNote } from "../con
 const router = express.Router();
 
 router.get("/",getAllNotes);
-router.get("/",getNoteById);
+router.get("/:id",getNoteById);
 router.post("/", createNote);
 router.put("/:id",updateNote);
 router.delete("/:id",deleteNote);
