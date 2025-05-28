@@ -17,8 +17,8 @@ app.use(cors({
 }));
 
 // Middleware
-app.use(rateLimiter); // toujours avant pour bloquer tôt
 app.use(express.json());
+app.use(rateLimiter); // toujours avant pour bloquer tôt
 
 app.use("/api/notes", notesRoutes);
 

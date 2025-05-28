@@ -12,7 +12,7 @@ const rateLimiter = async (req, res, next) => {
         // Si la limite est dépassée, on bloque la requête
         if (!success) {
             return res.status(429).json({
-                message: "Too many requests, please try later"
+                message: "Too many requests, please try later",
             });
         }
 
