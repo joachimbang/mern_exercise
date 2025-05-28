@@ -13,7 +13,7 @@ const redis = Redis.fromEnv();
 // Ici, 100 requêtes sont autorisées toutes les 60 secondes
 const ratelimit = new Ratelimit({
   redis,
-  limiter: Ratelimit.slidingWindow(100, "60s"),
+  limiter: Ratelimit.slidingWindow(10, "10s"),
   analytics: true, // (optionnel) permet d’avoir des stats sur Upstash
 });
 
